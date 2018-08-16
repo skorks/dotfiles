@@ -5,6 +5,7 @@ brew cask install 1password
 brew cask install dropbox
 brew cask install authy
 brew install git
+brew install mas
 
 curl https://raw.githubusercontent.com/skorks/dotfiles/master/.gitconfig | tee ~/.gitconfig
 
