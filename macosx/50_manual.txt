@@ -1,0 +1,3 @@
+- sign in and configure 1password
+- sign in and configure dropbox
+- sign in and configure authy

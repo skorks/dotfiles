@@ -1,0 +1,7 @@
+- generate a new ssh key
+ssh-keygen -t rsa -b 4096 -C "askorkin@gmail.com alansmac1"
+
+- copy the new ssh key to clipboard
+pbcopy < ~/.ssh/id_rsa.pub
+
+- add the new key to github 

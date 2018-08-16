@@ -1,0 +1,5 @@
+- change password
+- disable guest account
+- enable 3 finger drag via accessibility menu
+- ensure filevault disk encrypiton is on 
+- ensure the firewall is on (TODO needs automation)
