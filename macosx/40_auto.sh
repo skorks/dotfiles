@@ -14,3 +14,8 @@ softwareupdate -i -a
 
 mkdir -p projects/mine
 git clone git@github.com:skorks/dotfiles.git ~/projects/mine/dotfiles
+
+eval "$(ssh-agent -s)"
+mkdir -p ~/.ssh
+cp ~/projects/mine/dotfiles/.ssh/config ~/.ssh/config
+ssh-add -K ~/.ssh/id_rsa

@@ -20,6 +20,8 @@ brew install bash-completion
 brew install ctags
 brew install git-extras
 brew install readline
+brew install jq
+brew install yarn --without-node
 
 echo "[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion" | tee ~/.bash_profile
 
@@ -40,5 +42,7 @@ brew cask install slack
 brew cask install visual-studio-code
 brew cask install skype
 brew cask install github
+brew cask install kitematic
+brew cask install aws-vault
 
 

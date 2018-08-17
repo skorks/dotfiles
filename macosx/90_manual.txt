@@ -11,3 +11,7 @@
 - configure psequel, keep in dock
 - configure github desktop, sign in, keep in dock
 - configure slack, sign in to ex-envato, keep in dock
+- configure iterm2 ???
+- configure vscode ???
+- install docker from https://store.docker.com/editions/community/docker-ce-desktop-mac
+- configure kitematic

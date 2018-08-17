@@ -1,0 +1,1 @@
+- restart machine for all settings to take effect
