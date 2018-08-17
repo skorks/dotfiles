@@ -1,0 +1,13 @@
+- configure moom, run as menu bar app, launch automatically at login
+- allow moom to control computer, via security & privacy -> accessibility
+- configure hazeover, enable, start on login, show status in menubar
+- allow hazeover to control computer, via security & privacy -> accessibility
+- configure clipy, launch on login, max clipboard history size 300
+- configure chrome, make chrome the default browser, don't send data to google, keep chrome in dock
+- configure firefox, keep firefox in dock
+- configure the unarachiver, select all formats, create new folder if more than 1 top level item, set modification date to that of archive file
+- configure imageoptim, keep in dock
+- configure istat menus, add my registration, do combined with cpu and mem in top menu
+- configure psequel, keep in dock
+- configure github desktop, sign in, keep in dock
+- configure slack, sign in to ex-envato, keep in dock

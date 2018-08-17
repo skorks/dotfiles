@@ -4,3 +4,6 @@
 - ensure filevault disk encrypiton is on 
 - ensure the firewall is on (TODO needs automation)
 - sign in to app store
+- ensure finder starts in home folder on startup
+- show battery as percentage
+- show the volume in the top menu
