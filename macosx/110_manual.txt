@@ -1,1 +1,3 @@
+- copy the reference projects across
+- copy my ebooks across
 - restart machine for all settings to take effect
