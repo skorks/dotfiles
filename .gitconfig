@@ -1,83 +1,106 @@
+# ==============================================================================
+# Personal Information & Authentication
+# ==============================================================================
 [user]
-	name = Alan Skorkin
-	email = alan@skorks.com
-[github]
-	user = skorks
-	token = 85779957b3c7afce932f60e214236836
+  name = Alan Skorkin
+  email = 109413+skorks@users.noreply.github.com
+  signingkey = 03805ACA3804ED9E
+
+# ==============================================================================
+# Core Git Configuration
+# ==============================================================================
 [core]
-	editor = vim
-  pager = less -FRSX
+  editor = code --wait
+  pager = less -FRX
+  autocrlf = input
+  preloadindex = true
+  fscache = true
+
 [merge]
-	tool = meld
+  tool = vscode
+  conflictstyle = diff3
+
+[mergetool "vscode"]
+  cmd = code --wait $MERGED
+
+# ==============================================================================
+# Color Configuration
+# ==============================================================================
 [color]
-  diff = auto
-  status = auto
-  branch = auto
-  interactive = auto
   ui = true
-  pager = true
-[color "branch"]
-  current = yellow reverse
-  local = yellow
-  remote = green
-[color "diff"]
-  meta = yellow bold
-  frag = magenta bold
-  old = red bold
-  new = green bold
-[color "status"]
-  added = yellow
-  changed = green
-  untracked = cyan
+
+# ==============================================================================
+# Essential Aliases
+# ==============================================================================
 [alias]
+  # Basic shortcuts
   co = checkout
   ci = commit
   st = status
   br = branch
-  changes = log --oneline --reverse
-  pop = !git stash apply && git stash clear
-  tags = tag -n1 -l
-  com = checkout master 
-  # usage example: git w -n5
-  w = whatchanged
-  # add all changed (but not new) files to stage (index):
-  au = add -u
-  # show list of contributors in descending order by number of commits
-  rank = shortlog -sn --no-merges
-  # prune all tracking local branches that have been removed from remote:
-  prune-all = !git remote | xargs -n 1 git remote prune
-  # given a string for an author, try to figure out full name and email:
-  whois = "!sh -c 'git log -i -1 --pretty=\"format:%an <%ae>\n\" --author=\"$1\"' -"
-  # given any git object, try to show it briefly
-  whatis = show -s --pretty='tformat:%h (%s, %ad)' --date=short
-  # Search for a given string in all patches and print commit messages
-  # example: search for any commit that adds or removes string "foobar"
-  #     git searchcommits foobar
-  # example: search commits for string "foobar" in directory src/lib
-  #     git searchcommits foobar src/lib
-  # example: search commits for "foobar", print full diff of commit with 1 line context
-  #     git searchcommits foobar --pickaxe-all -U1 src/lib
-  searchcommits = "!f() { query=\"$1\"; shift; git log -S\"$query\" \"$@\"; }; f \"$@\""
 
-  last = cat-file commit HEAD
-  cat = -p cat-file -p
-  ds = diff --stat
-  #git branch -vv   #branches and which remotes
-  #git branch -av   #local and remote braches
-
-  log1 = log --pretty=oneline --abbrev-commit --decorate
-  log2 = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
-  log3 = log --graph --pretty=format:'%Cred%H%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --date=relative $@ | git name-rev --stdin --name-only
-
+  # Commit management
   amend = commit --amend -C HEAD
-  edit-last-commit = !vim `git diff-tree -r --name-only HEAD HEAD~1`
+  uncommit = reset --soft HEAD~1
+  unstage = reset HEAD --
+  discard = checkout --
 
-  #st = "!f() { git ls-files --exclude-standard -t -u -s -m -d $@ | sed -e 's/C.*\t/C /' ; } ; f"
-  #s = "!git diff --name-status | sed -e 's/^/W /' ; git diff --cached --name-status | sed -e 's/^/C /'"
-  #file-blame = !git ls-files | xargs -n1 -i{} git log -1 --pretty=format:\"%ci {}\" -- {}
-  #edit-last-commit = !vim `git diff-tree -r --name-only HEAD HEAD~1`
-  #edit-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; vim `f`"
-  #add-unmerged = "!f() { git ls-files --unmerged | cut -f2 | sort -u ; }; git add `f`"
+  # Branch management
+  cleanup = !git branch --merged | grep -v '\\*\\|master\\|main\\|develop' | xargs -n 1 git branch -d
+  recent = branch --sort=-committerdate
+
+  # Logging
+  graph = log --graph --oneline --decorate --all
+
+# ==============================================================================
+# Workflow Configuration
+# ==============================================================================
 [push]
-  default = tracking
-  #default = matching
+  default = simple
+
+[pull]
+  rebase = true
+
+[rebase]
+  autoStash = true
+
+[branch]
+  autosetupmerge = always
+  autosetuprebase = always
+
+[init]
+  defaultBranch = main
+
+[fetch]
+  prune = true
+
+[rerere]
+  enabled = true
+
+[help]
+  autocorrect = 30
+
+[diff]
+  algorithm = histogram
+
+[gc]
+  auto = 256
+
+# ==============================================================================
+# Security & Signing
+# ==============================================================================
+[commit]
+  gpgsign = true
+
+[tag]
+  gpgsign = true
+
+[gpg]
+  program = gpg
+
+# ==============================================================================
+# Pager Configuration
+# ==============================================================================
+[pager]
+  branch = false
+  tag = false
