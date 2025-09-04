@@ -1,84 +1,188 @@
-# Path to your oh-my-zsh configuration.
-ZSH=$HOME/.oh-my-zsh
+# Initialize Homebrew environment first (moved from .zprofile)
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
-#ZSH_THEME="robbyrussell"
-ZSH_THEME="blinks"
+# Install Starship if not present
+if ! command -v starship &> /dev/null; then
+  echo "Installing Starship via Homebrew..."
+  brew install starship
+fi
 
-# Example aliases
-alias zshconfig="mvim ~/.zshrc"
-alias ohmyzsh="mvim ~/.oh-my-zsh"
+# Initialize Starship
+eval "$(starship init zsh)"
 
-# Set to this to use case-sensitive completion
-# CASE_SENSITIVE="true"
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+  print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+  command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+  command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+    print -P "%F{33} %F{34}Installation successful.%f%b" || \
+    print -P "%F{160} The clone has failed.%f%b"
+fi
 
-# Comment this out to disable bi-weekly auto-update checks
-# DISABLE_AUTO_UPDATE="true"
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
 
-# Uncomment to change how many often would you like to wait before auto-updates occur? (in days)
-# export UPDATE_ZSH_DAYS=13
+# Load essential plugins (simplified syntax)
+zinit light zdharma-continuum/fast-syntax-highlighting
+zinit light zsh-users/zsh-autosuggestions
+zinit light zsh-users/zsh-completions
 
-# Uncomment following line if you want to disable colors in ls
-# DISABLE_LS_COLORS="true"
+# Load OMZ git plugin (much faster than full OMZ)
+zinit snippet OMZ::plugins/git/git.plugin.zsh
+zinit snippet OMZ::plugins/copyfile/copyfile.plugin.zsh
+zinit snippet OMZ::plugins/copypath/copypath.plugin.zsh
 
-# Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
+# Essential zsh options
+unsetopt correctall              # Disable annoying auto-correction
+setopt AUTO_CD                   # cd by typing directory name
+setopt HIST_VERIFY               # Show command before running history expansion
+setopt SHARE_HISTORY             # Share history between sessions
+setopt HIST_IGNORE_DUPS          # Don't record duplicate commands
+setopt HIST_IGNORE_SPACE         # Don't record commands starting with space
+setopt EXTENDED_GLOB             # Enable extended globbing patterns
 
-# Uncomment following line if you want red dots to be displayed while waiting for completion
-COMPLETION_WAITING_DOTS="true"
+# Cache brew --prefix for performance
+if [[ -z "$BREW_PREFIX" ]]; then
+  export BREW_PREFIX=$(brew --prefix)
+fi
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git brew gem)
+# Optimize PATH setup
+PATH="$BREW_PREFIX/opt/coreutils/libexec/gnubin:$PATH"
+PATH="$BREW_PREFIX/opt/findutils/libexec/gnubin:$PATH"
+PATH="$BREW_PREFIX/opt/curl/bin:$PATH"
+PATH="/Users/askorkin/.local/bin:$PATH"
 
-source $ZSH/oh-my-zsh.sh
-
-# Customize to your needs...
-unsetopt correctall   #unset this as it as annoying
-
+# Terminal colors and editor settings
 export CLICOLOR=1
-export LSCOLORS="ExFxCxDxBxegedabagacad"
-
+export LSCOLORS="ExFxCxDxBxegedabagacad"        # BSD ls colors (fallback)
+export LS_COLORS="di=1;34:ln=1;36:so=1;35:pi=1;33:ex=1;32:bd=1;33:cd=1;33:su=1;31:sg=1;31:tw=1;34:ow=1;34"  # GNU ls colors
 export EDITOR="code"
-export VISUAL='code --wait'
-export GIT_EDITOR='code --wait'
+export VISUAL="code --wait"
+export GIT_EDITOR="code --wait"
 
-export PATH=/usr/local/share/npm/bin:/usr/local/bin:/usr/local/sbin:$PATH
-export PATH=./bin:$PATH
-
-export JAVA_HOME=`/usr/libexec/java_home -v 1.8`
-# export NODE_PATH="/usr/local/lib/node"
-
+# Useful aliases
 alias h='history'
 alias j='jobs -l'
-alias which='type -a'
 alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
 alias path='echo -e ${PATH//:/\\n}'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
-alias du='du -kh'       # Makes a more readable output.
-alias df='df -kTh'
+alias ls='ls --color=auto'
+alias ll='ls -la'
+alias la='ls -A'
+alias l='ls -CF'
 
+# Development shortcuts
 alias be='bundle exec'
+alias g='git'
+alias code.='code .'
 
-unalias run-help
-autoload run-help
-HELPDIR=/usr/local/share/zsh/help
+# Safe versions (don't override system commands)
+alias duh='du -h'
+alias dfh='df -h'
 
-fpath=(/usr/local/share/zsh-completions $fpath)
+# Locale settings for proper Unicode support
+export LANG="en_AU.UTF-8"
+export LC_ALL="en_AU.UTF-8"
 
-#To enable shims and autocompletion add to your profile:
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+# Terminal title configuration for iTerm2
+function set_terminal_title() {
+  local current_path="$PWD"
+  local home_path="$HOME"
 
-export PATH="/usr/local/opt/node@6/bin:$PATH"
-export PATH="/usr/local/opt/sqlite/bin:$PATH"
-export PATH="/Users/askorkin/Library/Python/2.7/bin:$PATH"
+  # Replace home directory with ~
+  if [[ "$current_path" == "$home_path"* ]]; then
+    current_path="~${current_path#$home_path}"
+  fi
 
-export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-export MANPATH="/usr/local/opt/coreutils/libexec/gnuman:$MANPATH"
-export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"
-export MANPATH="/usr/local/opt/findutils/libexec/gnuman:$MANPATH"
-export PATH="/usr/local/opt/curl/bin:$PATH"
+  # Truncate path if too long (keep last 3 directories)
+  local truncated_path
+  if [[ ${#current_path} -gt 40 ]]; then
+    # Split path into components
+    local path_parts=(${(s:/:)current_path})
+    local num_parts=${#path_parts}
+
+    if [[ $num_parts -gt 3 ]]; then
+      truncated_path=".../${path_parts[-2]}/${path_parts[-1]}"
+    else
+      truncated_path="$current_path"
+    fi
+  else
+    truncated_path="$current_path"
+  fi
+
+  echo -ne "\033]1;${truncated_path}\007"  # Tab title (truncated path)
+  echo -ne "\033]2;$current_path\007"      # Window title (full path with ~)
+}
+
+# Update terminal title when changing directories
+function chpwd() {
+  set_terminal_title
+}
+
+# Update terminal title for each prompt (ensures it updates reliably)
+precmd() {
+  set_terminal_title
+}
+
+# Set initial terminal title
+set_terminal_title
+
+# NVM configuration (lazy load for faster startup)
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "$BREW_PREFIX/opt/nvm/nvm.sh" ]]; then
+  # Create lazy loading function
+  nvm() {
+    unset -f nvm
+    source "$BREW_PREFIX/opt/nvm/nvm.sh"
+    [ -s "$BREW_PREFIX/opt/nvm/bash_completion" ] && source "$BREW_PREFIX/opt/nvm/bash_completion"
+    nvm "$@"
+  }
+
+  # Create lazy loading for node and npm as well
+  node() {
+    unset -f node npm npx
+    source "$BREW_PREFIX/opt/nvm/nvm.sh"
+    node "$@"
+  }
+
+  npm() {
+    unset -f node npm npx
+    source "$BREW_PREFIX/opt/nvm/nvm.sh"
+    npm "$@"
+  }
+
+  npx() {
+    unset -f node npm npx
+    source "$BREW_PREFIX/opt/nvm/nvm.sh"
+    npx "$@"
+  }
+fi
+
+# rbenv configuration (lazy load for faster startup)
+if command -v rbenv &> /dev/null; then
+  rbenv() {
+    unset -f rbenv ruby gem bundle
+    eval "$(rbenv init -)"
+    rbenv "$@"
+  }
+
+  ruby() {
+    unset -f rbenv ruby gem bundle
+    eval "$(rbenv init -)"
+    ruby "$@"
+  }
+
+  gem() {
+    unset -f rbenv ruby gem bundle
+    eval "$(rbenv init -)"
+    gem "$@"
+  }
+
+  bundle() {
+    unset -f rbenv ruby gem bundle
+    eval "$(rbenv init -)"
+    bundle "$@"
+  }
+fi
