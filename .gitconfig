@@ -4,7 +4,7 @@
 [user]
   name = Alan Skorkin
   email = 109413+skorks@users.noreply.github.com
-  signingkey = 03805ACA3804ED9E
+  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ77uNe1mzsQ4hZT53bNJhLBvtTq5QIuTJaQ38u2Q0vk
 
 # ==============================================================================
 # Core Git Configuration
@@ -96,7 +96,10 @@
   gpgsign = true
 
 [gpg]
-  program = gpg
+  format = ssh
+
+[gpg "ssh"]
+  program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
 
 # ==============================================================================
 # Pager Configuration
